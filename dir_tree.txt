@@ -1,0 +1,866 @@
+.
+├── agent
+│   ├── dataset
+│   │   ├── d3il_dataset
+│   │   │   ├── aligning_dataset.py
+│   │   │   ├── avoiding_dataset.py
+│   │   │   ├── base_dataset.py
+│   │   │   ├── geo_transform.py
+│   │   │   ├── __init__.py
+│   │   │   ├── pushing_dataset.py
+│   │   │   ├── sorting_dataset.py
+│   │   │   └── stacking_dataset.py
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-38.pyc
+│   │   │   └── sequence.cpython-38.pyc
+│   │   └── sequence.py
+│   ├── eval
+│   │   ├── eval_agent.py
+│   │   ├── eval_diffusion_agent.py
+│   │   ├── eval_diffusion_img_agent.py
+│   │   ├── eval_gaussian_agent.py
+│   │   ├── eval_gaussian_img_agent.py
+│   │   └── __pycache__
+│   │       ├── eval_agent.cpython-38.pyc
+│   │       └── eval_diffusion_agent.cpython-38.pyc
+│   ├── finetune
+│   │   ├── __pycache__
+│   │   │   ├── train_agent.cpython-38.pyc
+│   │   │   ├── train_ppo_agent.cpython-38.pyc
+│   │   │   └── train_ppo_diffusion_agent.cpython-38.pyc
+│   │   ├── train_agent.py
+│   │   ├── train_awr_diffusion_agent.py
+│   │   ├── train_calql_agent.py
+│   │   ├── train_dipo_diffusion_agent.py
+│   │   ├── train_dql_diffusion_agent.py
+│   │   ├── train_ibrl_agent.py
+│   │   ├── train_idql_diffusion_agent.py
+│   │   ├── train_ppo_agent.py
+│   │   ├── train_ppo_diffusion_agent.py
+│   │   ├── train_ppo_diffusion_img_agent.py
+│   │   ├── train_ppo_exact_diffusion_agent.py
+│   │   ├── train_ppo_gaussian_agent.py
+│   │   ├── train_ppo_gaussian_img_agent.py
+│   │   ├── train_qsm_diffusion_agent.py
+│   │   ├── train_rlpd_agent.py
+│   │   ├── train_rwr_diffusion_agent.py
+│   │   └── train_sac_agent.py
+│   └── pretrain
+│       ├── __pycache__
+│       │   ├── train_agent.cpython-38.pyc
+│       │   └── train_diffusion_agent.cpython-38.pyc
+│       ├── train_agent.py
+│       ├── train_diffusion_agent.py
+│       └── train_gaussian_agent.py
+├── cfg
+│   ├── d3il
+│   │   ├── finetune
+│   │   │   ├── avoid_m1
+│   │   │   │   ├── ft_ppo_diffusion_mlp.yaml
+│   │   │   │   ├── ft_ppo_gaussian_mlp.yaml
+│   │   │   │   └── ft_ppo_gmm_mlp.yaml
+│   │   │   ├── avoid_m2
+│   │   │   │   ├── ft_ppo_diffusion_mlp.yaml
+│   │   │   │   ├── ft_ppo_gaussian_mlp.yaml
+│   │   │   │   └── ft_ppo_gmm_mlp.yaml
+│   │   │   └── avoid_m3
+│   │   │       ├── ft_ppo_diffusion_mlp.yaml
+│   │   │       ├── ft_ppo_gaussian_mlp.yaml
+│   │   │       └── ft_ppo_gmm_mlp.yaml
+│   │   └── pretrain
+│   │       ├── avoid_m1
+│   │       │   ├── pre_diffusion_mlp.yaml
+│   │       │   ├── pre_gaussian_mlp.yaml
+│   │       │   └── pre_gmm_mlp.yaml
+│   │       ├── avoid_m2
+│   │       │   ├── pre_diffusion_mlp.yaml
+│   │       │   ├── pre_gaussian_mlp.yaml
+│   │       │   └── pre_gmm_mlp.yaml
+│   │       └── avoid_m3
+│   │           ├── pre_diffusion_mlp.yaml
+│   │           ├── pre_gaussian_mlp.yaml
+│   │           └── pre_gmm_mlp.yaml
+│   ├── finetuning.md
+│   ├── furniture
+│   │   ├── eval
+│   │   │   └── one_leg_low
+│   │   │       └── eval_diffusion_mlp.yaml
+│   │   ├── finetune
+│   │   │   ├── lamp_low
+│   │   │   │   ├── ft_ppo_diffusion_mlp.yaml
+│   │   │   │   ├── ft_ppo_diffusion_unet.yaml
+│   │   │   │   └── ft_ppo_gaussian_mlp.yaml
+│   │   │   ├── lamp_med
+│   │   │   │   ├── ft_ppo_diffusion_mlp.yaml
+│   │   │   │   ├── ft_ppo_diffusion_unet.yaml
+│   │   │   │   └── ft_ppo_gaussian_mlp.yaml
+│   │   │   ├── one_leg_low
+│   │   │   │   ├── ft_ppo_diffusion_mlp.yaml
+│   │   │   │   ├── ft_ppo_diffusion_unet.yaml
+│   │   │   │   └── ft_ppo_gaussian_mlp.yaml
+│   │   │   ├── one_leg_med
+│   │   │   │   ├── ft_ppo_diffusion_mlp.yaml
+│   │   │   │   ├── ft_ppo_diffusion_unet.yaml
+│   │   │   │   └── ft_ppo_gaussian_mlp.yaml
+│   │   │   ├── round_table_low
+│   │   │   │   ├── ft_ppo_diffusion_mlp.yaml
+│   │   │   │   ├── ft_ppo_diffusion_unet.yaml
+│   │   │   │   └── ft_ppo_gaussian_mlp.yaml
+│   │   │   └── round_table_med
+│   │   │       ├── ft_ppo_diffusion_mlp.yaml
+│   │   │       ├── ft_ppo_diffusion_unet.yaml
+│   │   │       └── ft_ppo_gaussian_mlp.yaml
+│   │   └── pretrain
+│   │       ├── lamp_low
+│   │       │   ├── pre_diffusion_mlp.yaml
+│   │       │   ├── pre_diffusion_unet.yaml
+│   │       │   └── pre_gaussian_mlp.yaml
+│   │       ├── lamp_med
+│   │       │   ├── pre_diffusion_mlp.yaml
+│   │       │   ├── pre_diffusion_unet.yaml
+│   │       │   └── pre_gaussian_mlp.yaml
+│   │       ├── one_leg_low
+│   │       │   ├── pre_diffusion_mlp.yaml
+│   │       │   ├── pre_diffusion_unet.yaml
+│   │       │   └── pre_gaussian_mlp.yaml
+│   │       ├── one_leg_med
+│   │       │   ├── pre_diffusion_mlp.yaml
+│   │       │   ├── pre_diffusion_unet.yaml
+│   │       │   └── pre_gaussian_mlp.yaml
+│   │       ├── round_table_low
+│   │       │   ├── pre_diffusion_mlp.yaml
+│   │       │   ├── pre_diffusion_unet.yaml
+│   │       │   └── pre_gaussian_mlp.yaml
+│   │       └── round_table_med
+│   │           ├── pre_diffusion_mlp.yaml
+│   │           ├── pre_diffusion_unet.yaml
+│   │           └── pre_gaussian_mlp.yaml
+│   ├── gym
+│   │   ├── eval
+│   │   │   ├── halfcheetah-v2
+│   │   │   │   ├── eval_diffusion_mlp.yaml
+│   │   │   │   └── eval_gaussian_mlp.yaml
+│   │   │   └── hopper-v2
+│   │   │       ├── eval_diffusion_mlp.yaml
+│   │   │       └── eval_gaussian_mlp.yaml
+│   │   ├── finetune
+│   │   │   ├── halfcheetah-v2
+│   │   │   │   ├── calql_mlp_online.yaml
+│   │   │   │   ├── ft_awr_diffusion_mlp.yaml
+│   │   │   │   ├── ft_dipo_diffusion_mlp.yaml
+│   │   │   │   ├── ft_dql_diffusion_mlp.yaml
+│   │   │   │   ├── ft_idql_diffusion_mlp.yaml
+│   │   │   │   ├── ft_ppo_diffusion_mlp.yaml
+│   │   │   │   ├── ft_ppo_exact_diffusion_mlp.yaml
+│   │   │   │   ├── ft_qsm_diffusion_mlp.yaml
+│   │   │   │   ├── ft_rwr_diffusion_mlp.yaml
+│   │   │   │   ├── ibrl_mlp.yaml
+│   │   │   │   ├── ppo_diffusion_mlp.yaml
+│   │   │   │   ├── ppo_gaussian_mlp.yaml
+│   │   │   │   ├── rlpd_mlp.yaml
+│   │   │   │   └── sac_mlp.yaml
+│   │   │   ├── hopper-v2
+│   │   │   │   ├── calql_mlp_online.yaml
+│   │   │   │   ├── ft_awr_diffusion_mlp.yaml
+│   │   │   │   ├── ft_dipo_diffusion_mlp.yaml
+│   │   │   │   ├── ft_dql_diffusion_mlp.yaml
+│   │   │   │   ├── ft_idql_diffusion_mlp.yaml
+│   │   │   │   ├── ft_ppo_diffusion_mlp.yaml
+│   │   │   │   ├── ft_ppo_exact_diffusion_mlp.yaml
+│   │   │   │   ├── ft_qsm_diffusion_mlp.yaml
+│   │   │   │   ├── ft_rwr_diffusion_mlp.yaml
+│   │   │   │   ├── ibrl_mlp.yaml
+│   │   │   │   ├── ppo_diffusion_mlp.yaml
+│   │   │   │   ├── ppo_gaussian_mlp.yaml
+│   │   │   │   ├── rlpd_mlp.yaml
+│   │   │   │   └── sac_mlp.yaml
+│   │   │   └── walker2d-v2
+│   │   │       ├── ft_awr_diffusion_mlp.yaml
+│   │   │       ├── ft_dipo_diffusion_mlp.yaml
+│   │   │       ├── ft_dql_diffusion_mlp.yaml
+│   │   │       ├── ft_idql_diffusion_mlp.yaml
+│   │   │       ├── ft_ppo_diffusion_mlp.yaml
+│   │   │       ├── ft_qsm_diffusion_mlp.yaml
+│   │   │       ├── ft_rlpd_mlp.yaml
+│   │   │       ├── ft_rwr_diffusion_mlp.yaml
+│   │   │       ├── ppo_diffusion_mlp.yaml
+│   │   │       └── ppo_gaussian_mlp.yaml
+│   │   └── pretrain
+│   │       ├── halfcheetah-medium-v2
+│   │       │   ├── calql_mlp_offline.yaml
+│   │       │   ├── pre_diffusion_mlp.yaml
+│   │       │   └── pre_gaussian_mlp.yaml
+│   │       ├── hopper-medium-v2
+│   │       │   ├── calql_mlp_offline.yaml
+│   │       │   ├── pre_diffusion_mlp.yaml
+│   │       │   └── pre_gaussian_mlp.yaml
+│   │       └── walker2d-medium-v2
+│   │           ├── pre_diffusion_mlp.yaml
+│   │           └── pre_gaussian_mlp.yaml
+│   ├── pretraining.md
+│   └── robomimic
+│       ├── env_meta
+│       │   ├── can-img.json
+│       │   ├── can.json
+│       │   ├── lift-img.json
+│       │   ├── lift.json
+│       │   ├── square-img.json
+│       │   ├── square.json
+│       │   ├── transport-img.json
+│       │   └── transport.json
+│       ├── eval
+│       │   ├── can
+│       │   │   ├── eval_diffusion_mlp_img.yaml
+│       │   │   ├── eval_diffusion_mlp.yaml
+│       │   │   ├── eval_gaussian_mlp_img.yaml
+│       │   │   └── eval_gaussian_mlp.yaml
+│       │   └── square
+│       │       ├── eval_diffusion_mlp.yaml
+│       │       └── eval_gaussian_mlp.yaml
+│       ├── finetune
+│       │   ├── can
+│       │   │   ├── calql_mlp_online.yaml
+│       │   │   ├── ft_awr_diffusion_mlp.yaml
+│       │   │   ├── ft_dipo_diffusion_mlp.yaml
+│       │   │   ├── ft_dql_diffusion_mlp.yaml
+│       │   │   ├── ft_idql_diffusion_mlp.yaml
+│       │   │   ├── ft_ppo_diffusion_mlp_img.yaml
+│       │   │   ├── ft_ppo_diffusion_mlp.yaml
+│       │   │   ├── ft_ppo_diffusion_unet.yaml
+│       │   │   ├── ft_ppo_exact_diffusion_mlp.yaml
+│       │   │   ├── ft_ppo_gaussian_mlp_img.yaml
+│       │   │   ├── ft_ppo_gaussian_mlp.yaml
+│       │   │   ├── ft_ppo_gaussian_transformer.yaml
+│       │   │   ├── ft_ppo_gmm_mlp.yaml
+│       │   │   ├── ft_ppo_gmm_transformer.yaml
+│       │   │   ├── ft_qsm_diffusion_mlp.yaml
+│       │   │   ├── ft_rwr_diffusion_mlp.yaml
+│       │   │   ├── ibrl_mlp.yaml
+│       │   │   └── rlpd_mlp.yaml
+│       │   ├── lift
+│       │   │   ├── ft_awr_diffusion_mlp.yaml
+│       │   │   ├── ft_dipo_diffusion_mlp.yaml
+│       │   │   ├── ft_dql_diffusion_mlp.yaml
+│       │   │   ├── ft_idql_diffusion_mlp.yaml
+│       │   │   ├── ft_ppo_diffusion_mlp_img.yaml
+│       │   │   ├── ft_ppo_diffusion_mlp.yaml
+│       │   │   ├── ft_ppo_diffusion_unet.yaml
+│       │   │   ├── ft_ppo_gaussian_mlp_img.yaml
+│       │   │   ├── ft_ppo_gaussian_mlp.yaml
+│       │   │   ├── ft_ppo_gaussian_transformer.yaml
+│       │   │   ├── ft_ppo_gmm_mlp.yaml
+│       │   │   ├── ft_ppo_gmm_transformer.yaml
+│       │   │   ├── ft_qsm_diffusion_mlp.yaml
+│       │   │   ├── ft_rwr_diffusion_mlp.yaml
+│       │   │   └── rlpd_mlp.yaml
+│       │   ├── square
+│       │   │   ├── calql_mlp_online.yaml
+│       │   │   ├── ft_awr_diffusion_mlp.yaml
+│       │   │   ├── ft_dipo_diffusion_mlp.yaml
+│       │   │   ├── ft_dql_diffusion_mlp.yaml
+│       │   │   ├── ft_idql_diffusion_mlp.yaml
+│       │   │   ├── ft_ppo_diffusion_mlp_img.yaml
+│       │   │   ├── ft_ppo_diffusion_mlp.yaml
+│       │   │   ├── ft_ppo_diffusion_unet.yaml
+│       │   │   ├── ft_ppo_gaussian_mlp_img.yaml
+│       │   │   ├── ft_ppo_gaussian_mlp.yaml
+│       │   │   ├── ft_ppo_gaussian_transformer.yaml
+│       │   │   ├── ft_ppo_gmm_mlp.yaml
+│       │   │   ├── ft_ppo_gmm_transformer.yaml
+│       │   │   ├── ft_qsm_diffusion_mlp.yaml
+│       │   │   ├── ft_rwr_diffusion_mlp.yaml
+│       │   │   ├── ibrl_mlp.yaml
+│       │   │   └── rlpd_mlp.yaml
+│       │   └── transport
+│       │       ├── ft_awr_diffusion_mlp.yaml
+│       │       ├── ft_dipo_diffusion_mlp.yaml
+│       │       ├── ft_dql_diffusion_mlp.yaml
+│       │       ├── ft_idql_diffusion_mlp.yaml
+│       │       ├── ft_ppo_diffusion_mlp_img.yaml
+│       │       ├── ft_ppo_diffusion_mlp.yaml
+│       │       ├── ft_ppo_diffusion_unet.yaml
+│       │       ├── ft_ppo_gaussian_mlp_img.yaml
+│       │       ├── ft_ppo_gaussian_mlp.yaml
+│       │       ├── ft_ppo_gaussian_transformer.yaml
+│       │       ├── ft_ppo_gmm_mlp.yaml
+│       │       ├── ft_ppo_gmm_transformer.yaml
+│       │       ├── ft_qsm_diffusion_mlp.yaml
+│       │       └── ft_rwr_diffusion_mlp.yaml
+│       └── pretrain
+│           ├── can
+│           │   ├── calql_mlp_offline.yaml
+│           │   ├── pre_diffusion_mlp_img.yaml
+│           │   ├── pre_diffusion_mlp.yaml
+│           │   ├── pre_diffusion_unet.yaml
+│           │   ├── pre_gaussian_mlp_ibrl.yaml
+│           │   ├── pre_gaussian_mlp_img.yaml
+│           │   ├── pre_gaussian_mlp.yaml
+│           │   ├── pre_gaussian_transformer.yaml
+│           │   ├── pre_gmm_mlp.yaml
+│           │   └── pre_gmm_transformer.yaml
+│           ├── lift
+│           │   ├── pre_diffusion_mlp_img.yaml
+│           │   ├── pre_diffusion_mlp.yaml
+│           │   ├── pre_diffusion_unet.yaml
+│           │   ├── pre_gaussian_mlp_ibrl.yaml
+│           │   ├── pre_gaussian_mlp_img.yaml
+│           │   ├── pre_gaussian_mlp.yaml
+│           │   ├── pre_gaussian_transformer.yaml
+│           │   ├── pre_gmm_mlp.yaml
+│           │   └── pre_gmm_transformer.yaml
+│           ├── square
+│           │   ├── calql_mlp_offline.yaml
+│           │   ├── pre_diffusion_mlp_img.yaml
+│           │   ├── pre_diffusion_mlp.yaml
+│           │   ├── pre_diffusion_unet.yaml
+│           │   ├── pre_gaussian_mlp_ibrl.yaml
+│           │   ├── pre_gaussian_mlp_img.yaml
+│           │   ├── pre_gaussian_mlp.yaml
+│           │   ├── pre_gaussian_transformer.yaml
+│           │   ├── pre_gmm_mlp.yaml
+│           │   └── pre_gmm_transformer.yaml
+│           └── transport
+│               ├── pre_diffusion_mlp_img.yaml
+│               ├── pre_diffusion_mlp.yaml
+│               ├── pre_diffusion_unet.yaml
+│               ├── pre_gaussian_mlp_ibrl.yaml
+│               ├── pre_gaussian_mlp_img.yaml
+│               ├── pre_gaussian_mlp.yaml
+│               ├── pre_gaussian_transformer.yaml
+│               ├── pre_gmm_mlp.yaml
+│               └── pre_gmm_transformer.yaml
+├── d3il-20241009T103840Z-001.zip
+├── data
+│   ├── d3il
+│   │   └── avoid_m1
+│   │       ├── 2024_07_06_22_47_30.log
+│   │       ├── normalization.npz
+│   │       ├── train.npz
+│   │       └── train-trajs.png
+│   ├── furniture
+│   │   └── one_leg_low
+│   │       └── normalization.pth
+│   └── gym
+│       └── hopper-medium-v2
+│           └── normalization.npz
+├── dir_tree.txt
+├── dppo.egg-info
+│   ├── dependency_links.txt
+│   ├── PKG-INFO
+│   ├── requires.txt
+│   ├── SOURCES.txt
+│   └── top_level.txt
+├── env
+│   ├── gym_utils
+│   │   ├── async_vector_env.py
+│   │   ├── furniture_normalizer.py
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── async_vector_env.cpython-38.pyc
+│   │   │   ├── furniture_normalizer.cpython-38.pyc
+│   │   │   ├── __init__.cpython-38.pyc
+│   │   │   ├── sync_vector_env.cpython-38.pyc
+│   │   │   └── vector_env.cpython-38.pyc
+│   │   ├── sync_vector_env.py
+│   │   ├── vector_env.py
+│   │   └── wrapper
+│   │       ├── d3il_lowdim.py
+│   │       ├── furniture.py
+│   │       ├── __init__.py
+│   │       ├── mujoco_locomotion_lowdim.py
+│   │       ├── multi_step.py
+│   │       ├── __pycache__
+│   │       │   ├── d3il_lowdim.cpython-38.pyc
+│   │       │   ├── furniture.cpython-38.pyc
+│   │       │   ├── __init__.cpython-38.pyc
+│   │       │   ├── mujoco_locomotion_lowdim.cpython-38.pyc
+│   │       │   ├── multi_step.cpython-38.pyc
+│   │       │   ├── robomimic_image.cpython-38.pyc
+│   │       │   └── robomimic_lowdim.cpython-38.pyc
+│   │       ├── robomimic_image.py
+│   │       └── robomimic_lowdim.py
+│   └── plot_traj.py
+├── installation
+│   ├── install_d3il.md
+│   ├── install_furniture.md
+│   └── install_mujoco.md
+├── launch.txt
+├── LICENSE
+├── log
+│   ├── d3il-finetune
+│   │   └── avoiding-m5_m1_ft_diffusion_mlp_ta4_td20_tdf10
+│   │       ├── 2024-10-09_19-04-10_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-09_19-13-17_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-09_19-15-50_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-09_19-27-35_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_10-19-26_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_11-17-31_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_11-19-37_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_11-29-29_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_11-42-42_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_11-49-26_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_11-50-08_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_11-52-58_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_11-53-47_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_13-43-58_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_13-52-53_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_13-53-29_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_14-03-37_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_14-06-44_42
+│   │       │   └── run.log
+│   │       └── 2024-10-10_14-18-19_42
+│   │           └── run.log
+│   ├── d3il-pretrain
+│   │   ├── avoid_m1_pre_diffusion_mlp_ta4_td20
+│   │   │   └── 2024-10-10_13-45-40_42
+│   │   │       ├── checkpoint
+│   │   │       │   ├── state_10000.pt
+│   │   │       │   ├── state_1000.pt
+│   │   │       │   ├── state_11000.pt
+│   │   │       │   ├── state_12000.pt
+│   │   │       │   ├── state_2000.pt
+│   │   │       │   ├── state_3000.pt
+│   │   │       │   ├── state_4000.pt
+│   │   │       │   ├── state_5000.pt
+│   │   │       │   ├── state_6000.pt
+│   │   │       │   ├── state_7000.pt
+│   │   │       │   ├── state_8000.pt
+│   │   │       │   └── state_9000.pt
+│   │   │       └── run.log
+│   │   └── m1
+│   │       └── avoid_d56_r12_pre_diffusion_mlp_ta4_td20
+│   │           └── 2024-07-06_22-50-07
+│   │               └── checkpoint
+│   │                   └── state_10000.pt
+│   ├── furniture-finetune
+│   │   └── one_leg_low_dim_ft_diffusion_mlp_ta8_td100_tdf5
+│   │       ├── 2024-10-10_14-19-16_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_14-36-39_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_15-16-28_42
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_15-19-45_42
+│   │       │   ├── checkpoint
+│   │       │   │   └── state_0.pt
+│   │       │   ├── render
+│   │       │   ├── result.pkl
+│   │       │   └── run.log
+│   │       ├── 2024-10-10_15-26-36_42
+│   │       │   ├── checkpoint
+│   │       │   ├── render
+│   │       │   └── run.log
+│   │       └── 2024-10-10_15-27-47_42
+│   │           ├── checkpoint
+│   │           ├── render
+│   │           └── run.log
+│   ├── furniture-pretrain
+│   │   └── one_leg
+│   │       └── one_leg_low_dim_pre_diffusion_mlp_ta8_td100
+│   │           └── 2024-07-22_20-01-16
+│   │               └── checkpoint
+│   │                   └── state_8000.pt
+│   ├── gym-eval
+│   │   └── hopper-medium-v2_eval_diffusion_mlp_ta4_td20
+│   │       └── 2024-10-09_19-34-49_42
+│   │           └── run.log
+│   └── gym-pretrain
+│       └── hopper-medium-v2_pre_diffusion_mlp_ta4_td20
+│           └── 2024-06-12_23-10-05
+│               └── checkpoint
+│                   └── state_3000.pt
+├── model
+│   ├── common
+│   │   ├── critic.py
+│   │   ├── gaussian.py
+│   │   ├── gmm.py
+│   │   ├── __init__.py
+│   │   ├── mlp_gaussian.py
+│   │   ├── mlp_gmm.py
+│   │   ├── mlp.py
+│   │   ├── modules.py
+│   │   ├── __pycache__
+│   │   │   ├── critic.cpython-38.pyc
+│   │   │   ├── __init__.cpython-38.pyc
+│   │   │   ├── mlp.cpython-38.pyc
+│   │   │   └── modules.cpython-38.pyc
+│   │   ├── transformer.py
+│   │   └── vit.py
+│   ├── diffusion
+│   │   ├── diffusion_awr.py
+│   │   ├── diffusion_dipo.py
+│   │   ├── diffusion_dql.py
+│   │   ├── diffusion_idql.py
+│   │   ├── diffusion_ppo_exact.py
+│   │   ├── diffusion_ppo.py
+│   │   ├── diffusion.py
+│   │   ├── diffusion_qsm.py
+│   │   ├── diffusion_rwr.py
+│   │   ├── diffusion_vpg.py
+│   │   ├── eta.py
+│   │   ├── exact_likelihood.py
+│   │   ├── __init__.py
+│   │   ├── mlp_diffusion.py
+│   │   ├── modules.py
+│   │   ├── __pycache__
+│   │   │   ├── diffusion.cpython-38.pyc
+│   │   │   ├── diffusion_ppo.cpython-38.pyc
+│   │   │   ├── diffusion_vpg.cpython-38.pyc
+│   │   │   ├── eta.cpython-38.pyc
+│   │   │   ├── __init__.cpython-38.pyc
+│   │   │   ├── mlp_diffusion.cpython-38.pyc
+│   │   │   ├── modules.cpython-38.pyc
+│   │   │   └── sampling.cpython-38.pyc
+│   │   ├── sampling.py
+│   │   ├── sde_lib.py
+│   │   └── unet.py
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   └── __init__.cpython-38.pyc
+│   └── rl
+│       ├── gaussian_awr.py
+│       ├── gaussian_calql.py
+│       ├── gaussian_ibrl.py
+│       ├── gaussian_ppo.py
+│       ├── gaussian_rlpd.py
+│       ├── gaussian_rwr.py
+│       ├── gaussian_sac.py
+│       ├── gaussian_vpg.py
+│       ├── gmm_ppo.py
+│       ├── gmm_vpg.py
+│       └── __init__.py
+├── pyproject.toml
+├── README.md
+├── script
+│   ├── dataset
+│   │   ├── filter_d3il_avoid_data.py
+│   │   ├── get_d4rl_dataset.py
+│   │   ├── process_d3il_dataset.py
+│   │   ├── process_robomimic_dataset.py
+│   │   └── README.md
+│   ├── download_url.py
+│   ├── __pycache__
+│   │   └── download_url.cpython-38.pyc
+│   ├── run.py
+│   ├── set_path.sh
+│   ├── test_d3il_render.py
+│   └── test_robomimic_render.py
+├── util
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-38.pyc
+│   │   ├── reward_scaling.cpython-38.pyc
+│   │   ├── scheduler.cpython-38.pyc
+│   │   └── timer.cpython-38.pyc
+│   ├── reward_scaling.py
+│   ├── scheduler.py
+│   └── timer.py
+└── wandb
+    ├── debug-cli.zcai.log
+    ├── debug-internal.log -> offline-run-20241010_152748-yake1db0/logs/debug-internal.log
+    ├── debug.log -> offline-run-20241010_152748-yake1db0/logs/debug.log
+    ├── latest-run -> offline-run-20241010_152748-yake1db0
+    ├── offline-run-20241010_115348-epjfgp04
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-epjfgp04.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_134359-vf46k4bd
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-vf46k4bd.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_134603-e5jz1khe
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-e5jz1khe.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_135254-1202lxv2
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-1202lxv2.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_135330-x0cwi24x
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-x0cwi24x.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_140338-i1n1y9dr
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-i1n1y9dr.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_140645-jaoypc34
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-jaoypc34.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_141820-8170svuo
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-8170svuo.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_143640-h4h3airo
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-h4h3airo.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_151629-0h8p0ptf
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-0h8p0ptf.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_151946-4jms4uco
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-4jms4uco.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_152637-hdz1odiv
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-hdz1odiv.wandb
+    │   └── tmp
+    │       └── code
+    ├── offline-run-20241010_152748-yake1db0
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-yake1db0.wandb
+    │   └── tmp
+    │       └── code
+    ├── run-20241009_190424-amzzo6sd
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── config.yaml
+    │   │   ├── output.log
+    │   │   ├── requirements.txt
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-amzzo6sd.wandb
+    │   └── tmp
+    │       └── code
+    ├── run-20241009_191319-2oamtx0k
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── config.yaml
+    │   │   ├── output.log
+    │   │   ├── requirements.txt
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-2oamtx0k.wandb
+    │   └── tmp
+    │       └── code
+    ├── run-20241010_101928-slbjwexq
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── config.yaml
+    │   │   ├── output.log
+    │   │   ├── requirements.txt
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-slbjwexq.wandb
+    │   └── tmp
+    │       └── code
+    ├── run-20241010_111733-66wsc4db
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── config.yaml
+    │   │   ├── output.log
+    │   │   ├── requirements.txt
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-66wsc4db.wandb
+    │   └── tmp
+    │       └── code
+    ├── run-20241010_111939-qdl59toy
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── config.yaml
+    │   │   ├── output.log
+    │   │   ├── requirements.txt
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-qdl59toy.wandb
+    │   └── tmp
+    │       └── code
+    ├── run-20241010_112931-l6z5c6s3
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── config.yaml
+    │   │   ├── output.log
+    │   │   ├── requirements.txt
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-l6z5c6s3.wandb
+    │   └── tmp
+    │       └── code
+    ├── run-20241010_114244-ja0my1yr
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── config.yaml
+    │   │   ├── output.log
+    │   │   ├── requirements.txt
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-ja0my1yr.wandb
+    │   └── tmp
+    │       └── code
+    ├── run-20241010_114928-7kw8mkva
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── config.yaml
+    │   │   ├── output.log
+    │   │   ├── requirements.txt
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-7kw8mkva.wandb
+    │   └── tmp
+    │       └── code
+    ├── run-20241010_115010-qyzimr4f
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── config.yaml
+    │   │   ├── output.log
+    │   │   ├── requirements.txt
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-qyzimr4f.wandb
+    │   └── tmp
+    │       └── code
+    ├── run-20241010_115259-7twluyj2
+    │   ├── files
+    │   │   ├── conda-environment.yaml
+    │   │   ├── config.yaml
+    │   │   ├── output.log
+    │   │   ├── requirements.txt
+    │   │   ├── wandb-metadata.json
+    │   │   └── wandb-summary.json
+    │   ├── logs
+    │   │   ├── debug-internal.log
+    │   │   └── debug.log
+    │   ├── run-7twluyj2.wandb
+    │   └── tmp
+    │       └── code
+    └── settings
+
+263 directories, 600 files

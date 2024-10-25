@@ -1,0 +1,16 @@
+10-10-2024
+# finetune
+HYDRA_FULL_ERROR=1 python script/run.py --config-name=ft_ppo_diffusion_mlp --config-dir=cfg/d3il/finetune/avoid_m1
+
+HYDRA_FULL_ERROR=1 python script/run.py --config-name=ft_ppo_diffusion_mlp --config-dir=cfg/furniture/finetune/one_leg_low
+# pretrain
+HYDRA_FULL_ERROR=1 python script/run.py --config-name=pre_diffusion_mlp --config-dir=cfg/d3il/pretrain/avoid_m1
+
+
+# env
+pip install -e .[furniture]
+
+pip install -e .[robomimic]
+
+10-12-2024
+python script/run.py --config-name=ft_ppo_diffusion_mlp --config-dir=cfg/robomimic/finetune/can
