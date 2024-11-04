@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<robot name="cube">
+    <link name="cube">
+        <visual>
+            <geometry>
+                <mesh filename="./cube.obj" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="./cube.obj" scale="1 1 1"/>
+            </geometry>
+            <!-- <sdf resolution="512"/> -->
+        </collision>
+    </link>
+</robot>

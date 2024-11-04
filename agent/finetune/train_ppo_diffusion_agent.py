@@ -105,10 +105,16 @@ class TrainPPODiffusionAgent(TrainPPOAgent):
                 if step % 10 == 0:
                     print(f"Processed step {step} of {self.n_steps}")
 
+                print("step: ", step)
                 # Select action
                 with torch.no_grad():
+                    # print("prev_obs_venv: ", prev_obs_venv)
                     cond = {
                         "state": torch.from_numpy(prev_obs_venv["state"])
+                        .float()
+                        .to(self.device),
+                        # "rgb": prev_obs_venv["state"][1]
+                        "rgb": prev_obs_venv["rgb"]  #torch.from_numpy(prev_obs_venv["rgb"][0])
                         .float()
                         .to(self.device)
                     }
@@ -137,15 +143,19 @@ class TrainPPODiffusionAgent(TrainPPOAgent):
                     obs_full_trajs = np.vstack(
                         (obs_full_trajs, obs_full_venv.transpose(1, 0, 2))
                     )
-                obs_trajs["state"][step] = prev_obs_venv["state"]
+                # obs_trajs["state"][step] = prev_obs_venv["state"]
+                if isinstance(prev_obs_venv["state"][0], torch.Tensor):
+                    obs_trajs["state"][step] = prev_obs_venv["state"][0].cpu().numpy()
+                else:
+                    obs_trajs["state"][step] = prev_obs_venv["state"][0]  # Or handle other data types as needed
                 chains_trajs[step] = chains_venv
                 reward_trajs[step] = reward_venv
                 terminated_trajs[step] = terminated_venv
                 firsts_trajs[step + 1] = done_venv
 
+                # print(obs_venv["rgb"])
                 # update for next step
                 prev_obs_venv = obs_venv
-
                 # count steps --- not acounting for done within action chunk
                 cnt_train_step += self.n_envs * self.act_steps if not eval_mode else 0
 
@@ -248,6 +258,9 @@ class TrainPPODiffusionAgent(TrainPPOAgent):
                     # bootstrap value with GAE if not terminal - apply reward scaling with constant if specified
                     obs_venv_ts = {
                         "state": torch.from_numpy(obs_venv["state"])
+                        .float()
+                        .to(self.device),
+                        "rgb": obs_venv["rgb"]
                         .float()
                         .to(self.device)
                     }

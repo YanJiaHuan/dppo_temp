@@ -22,6 +22,8 @@ def stack_last_n_obs_dict(all_obs, n_steps):
     """Apply padding"""
     assert len(all_obs) > 0
     all_obs = list(all_obs)
+    for obs in all_obs:
+        obs.pop('parts_poses')
     result = {
         key: torch.zeros(
             list(all_obs[-1][key].shape)[0:1]
@@ -95,10 +97,10 @@ class FurnitureRLSimEnvMultiStepWrapper(gym.Wrapper):
         obs = self.env.reset()
         self.obs = deque([obs], maxlen=max(self.n_obs_steps + 1, self.n_action_steps))
         obs = stack_last_n_obs_dict(self.obs, self.n_obs_steps)
-        nobs = self.process_obs(obs)
+        nobs, rgb = self.process_obs(obs)
         self.best_reward = torch.zeros(self.env.num_envs).to(self.device)
         self.done = list()
-        return {"state": nobs}
+        return {"state": nobs, "rgb": rgb}
 
     def reset_arg(self, options_list=None):
         return self.reset()
@@ -130,11 +132,11 @@ class FurnitureRLSimEnvMultiStepWrapper(gym.Wrapper):
         # Only mark the environment as done if it times out, ignore done from inner steps
         truncated = self.env.env_steps >= self.max_env_steps
 
-        nobs: np.ndarray = self.process_obs(obs)
+        nobs,rgb_imgs = self.process_obs(obs)
         truncated: np.ndarray = truncated.squeeze().cpu().numpy()
         terminated: np.ndarray = np.zeros_like(truncated, dtype=bool)
 
-        return {"state": nobs}, reward, terminated, truncated, info
+        return {"state": nobs, "rgb": rgb_imgs}, reward, terminated, truncated, info
 
     def _inner_step(self, action_chunk: torch.Tensor):
         dense_reward = torch.zeros(action_chunk.shape[0], device=action_chunk.device)
@@ -156,14 +158,41 @@ class FurnitureRLSimEnvMultiStepWrapper(gym.Wrapper):
         obs = stack_last_n_obs_dict(self.obs, self.n_obs_steps)
         return obs, sparse_reward, dense_reward, info
 
-    def process_obs(self, obs: torch.Tensor) -> np.ndarray:
+    def process_obs(self, obs: torch.Tensor):
+        """
+        obs["robot_state"].shape
+        torch.Size([1, 1, 14])
+
+        obs["parts_poses"].shape
+        torch.Size([1, 1, 42])
+
+        obs["color_image1"].shape
+        torch.Size([1, 1, 224, 224, 3])
+        """
+
+        #rgb_imgs = torch.cat([obs["color_image1"], obs["color_image2"]], dim=-1)
+
+        # Reshape color_image1 from [1, 1, 224, 224, 3] to [1, 1, 3, 224, 224]
+        color_image1 = obs["color_image1"].permute(0, 1, 4, 2, 3)
+
+        # Reshape color_image2 from [1, 1, 224, 224, 3] to [1, 1, 3, 224, 224]
+        color_image2 = obs["color_image2"].permute(0, 1, 4, 2, 3)
+
+        # Concatenate the two images along the third dimension (channels)
+        rgb_imgs = torch.cat([color_image1, color_image2], dim=2)
+
+
         # Convert the robot state to have 6D pose
         robot_state = obs["robot_state"]
-        robot_state = proprioceptive_quat_to_6d_rotation(robot_state)
+        # robot_state = proprioceptive_quat_to_6d_rotation(robot_state)
 
-        parts_poses = obs["parts_poses"]
-        obs = torch.cat([robot_state, parts_poses], dim=-1)
+        # parts_poses = obs["parts_poses"]
+        obs = robot_state
+        # obs = torch.cat([robot_state, parts_poses], dim=-1)
 
         nobs = self.normalizer(obs, "observations", forward=True)
         nobs = torch.clamp(nobs, -5, 5)
-        return nobs.cpu().numpy()  # (n_envs, n_obs_steps, obs_dim)
+
+        
+        # return nobs.cpu().numpy(), rgb_imgs  # (n_envs, n_obs_steps, obs_dim)
+        return nobs.detach().cpu().numpy(), rgb_imgs  # (n_envs, n_obs_steps, obs_dim)

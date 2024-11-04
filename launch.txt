@@ -14,3 +14,38 @@ pip install -e .[robomimic]
 
 10-12-2024
 python script/run.py --config-name=ft_ppo_diffusion_mlp --config-dir=cfg/robomimic/finetune/can
+
+10-30-2024
+HYDRA_FULL_ERROR=1 python script/run.py --config-name=ft_ppo_diffusion_mlp_img --config-dir=cfg/furniture/finetune/one_leg_low wandb=null
+
+10-31-2024
+HYDRA_FULL_ERROR=1 python script/run.py --config-name=ft_ppo_diffusion_mlp_img --config-dir=cfg/furniture/finetune/new_one_leg wandb=null
+
+
+python -m furniture_bench.scripts.collect_data --furniture pickplace --out-data-path our_data/test --is-sim --input-device keyboard
+
+HYDRA_FULL_ERROR=1 python script/run.py --config-name=eval_diffusion_mlp_img --config-dir=cfg/furniture/eval/one_leg_low wandb=null
+
+11-1-2024
+pip install Robotic_Arm
+
+
+from Robotic_Arm.rm_robot_interface import *
+
+arm_model = rm_robot_arm_model_e.RM_MODEL_GEN_72_E  # gen_72机械臂
+force_type = rm_force_type_e.RM_MODEL_RM_B_E  # 标准版
+# 初始化算法的机械臂及末端型号
+algo_handle = Algo(arm_model, force_type)
+
+# 正解关节角度[0, 0, -90, 0, -90, 0]返回位姿，使用欧拉角表示姿态
+pose = algo_handle.rm_algo_forward_kinematics([0, 0, -90, 0, -90, 0])
+print(pose)
+
+# 逆解从关节角度[0, 0, -90, 0, -90, 0]到目标位姿[0.186350, 0.062099, 0.200000, 3.141, 0, 1.569]。目标位姿姿态使用欧拉角表示。
+params = rm_inverse_kinematics_params_t([0, 0, -90, 0, -90, 0], [0.186350, 0.062099, 0.200000, 3.141, 0, 1.569], 1)
+q_out = algo_handle.rm_algo_inverse_kinematics(params)
+print(q_out)
+
+你应该使用逆解
+但是正解可能也会用到
+

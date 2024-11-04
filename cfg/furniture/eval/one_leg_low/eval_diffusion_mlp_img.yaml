@@ -1,0 +1,123 @@
+defaults:
+  - _self_
+hydra:
+  run:
+    dir: ${logdir}
+_target_: agent.eval.eval_diffusion_img_agent.EvalImgDiffusionAgent #agent.eval.eval_diffusion_agent.EvalDiffusionAgent #
+
+name: ${env_name}_eval_diffusion_mlp_img_ta${horizon_steps}_td${denoising_steps}
+logdir: ${oc.env:DPPO_LOG_DIR}/furniture-eval/${name}/${now:%Y-%m-%d}_${now:%H-%M-%S}_${seed}
+base_policy_path: /home/zcai/jh_workspace/1/dppo/log/furniture-pretrain/one_leg_low_dim_pre_diffusion_mlp_img_ta8_td100/2024-10-28_18-01-12_42/checkpoint/state_1500.pt #/home/kemove/dppo/log/furniture-pretrain/one_leg_low_dim_pre_diffusion_mlp_img_ta8_td100/2024-10-29_22-38-22_42/checkpoint/state_1000.pt #${oc.env:DPPO_LOG_DIR}/furniture-pretrain/one_leg/one_leg_low_dim_pre_diffusion_mlp_ta8_td100/2024-07-22_20-01-16/checkpoint/state_8000.pt
+normalization_path: ${oc.env:DPPO_DATA_DIR}/furniture/${env.specific.furniture}_${env.specific.randomness}/normalization.pth
+
+seed: 42
+device: cuda:0
+env_name: ${env.specific.furniture}_${env.specific.randomness}_dim
+obs_dim: 14 #58
+action_dim: 8 #10
+denoising_steps: 100
+cond_steps: 1
+horizon_steps: 8
+act_steps: 8
+use_ddim: True
+ddim_steps: 5
+img_cond_steps: 1 #2 #added for img version
+
+n_steps: ${eval:'round(${env.max_episode_steps} / ${act_steps})'}
+render_num: 0
+
+env:
+  n_envs: 1 #1000
+  name: ${env_name}
+  env_type: furniture
+  max_episode_steps: 700
+  best_reward_threshold_for_success: 1
+  specific:
+    headless: false #true
+    furniture: one_leg
+    randomness: low
+    normalization_path: ${normalization_path}
+    obs_steps: ${cond_steps}
+    act_steps: ${act_steps}
+    sparse_reward: True
+  wrappers:
+    furniture_image:
+      normalization_path: ${normalization_path}
+      low_dim_keys: ['robot_state']
+      image_keys: ['color_image1','color_image2'] #['rgb']
+      shape_meta: ${shape_meta}
+    multi_step:
+      n_obs_steps: ${cond_steps}
+      n_action_steps: ${act_steps}
+      max_episode_steps: ${env.max_episode_steps}
+      reset_within_step: True
+      image_keys: ['color_image1','color_image2'] #['rgb'] # Ensure 'rgb' is handled here
+
+# shape_meta:
+#   obs:
+#     color_image1: #rgb:
+#       shape: [3, 224, 224]
+#     color_image2: #rgb:
+#       shape: [3, 224, 224]
+#     robot_state:
+#       shape: [14]
+#   actions: 
+#     shape: [8]
+
+shape_meta:
+  obs:
+    rgb:
+      shape: [3, 224, 224]
+    state:
+      shape: [14]
+  actions: 
+    shape: [8]    
+
+model:
+  _target_: model.diffusion.diffusion.DiffusionModel
+  predict_epsilon: True
+  denoised_clip_value: 1.0
+  randn_clip_value: 3
+  #
+  use_ddim: ${use_ddim}
+  ddim_steps: ${ddim_steps}
+  network_path: ${base_policy_path}
+  network:
+    # _target_: model.diffusion.mlp_diffusion.DiffusionMLP
+    # time_dim: 32
+    mlp_dims: [1024, 1024, 1024, 1024, 1024, 1024, 1024]
+    #cond_mlp_dims: [512, 64]
+    use_layernorm: True # needed for larger MLP
+    # residual_style: True
+    # cond_dim: ${eval:'${obs_dim} * ${cond_steps}'}
+    # horizon_steps: ${horizon_steps}
+    # action_dim: ${action_dim}
+    _target_: model.diffusion.mlp_diffusion.VisionDiffusionMLP
+    backbone:
+      _target_: model.common.vit.VitEncoder
+      obs_shape: ${shape_meta.obs.rgb.shape} #color_image1.shape} #
+      num_channel: ${eval:'${shape_meta.obs.rgb.shape[0]} * ${img_cond_steps}'} #color_image1.shape[0]} * ${img_cond_steps}'} ## each image patch is history concatenated
+      cfg:
+        patch_size: 8
+        depth: 1
+        embed_dim: 128
+        num_heads: 4
+        embed_style: embed2
+        embed_norm: 0
+      img_h: 224
+      img_w: 224
+    img_cond_steps: ${img_cond_steps}
+    augment: True
+    spatial_emb: 128
+    time_dim: 32
+    #mlp_dims: [512, 512, 512]
+    num_img: 2
+    residual_style: True
+    cond_dim: ${eval:'${obs_dim} * ${cond_steps}'}
+    horizon_steps: ${horizon_steps}
+    action_dim: ${action_dim}
+  horizon_steps: ${horizon_steps}
+  obs_dim: ${obs_dim}
+  action_dim: ${action_dim}
+  denoising_steps: ${denoising_steps}
+  device: ${device}

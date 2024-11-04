@@ -1,0 +1,192 @@
+defaults:
+  - _self_
+hydra:
+  run:
+    dir: ${logdir}
+_target_: agent.finetune.train_ppo_diffusion_agent.TrainPPODiffusionAgent #agent.finetune.train_ppo_diffusion_img_agent.TrainPPOImgDiffusionAgent #
+name: ${env_name}_ft_diffusion_mlp_img_ta${horizon_steps}_td${denoising_steps}_tdf${ft_denoising_steps}
+logdir: ${oc.env:DPPO_LOG_DIR}/furniture-finetune/${name}/${now:%Y-%m-%d}_${now:%H-%M-%S}_${seed}
+base_policy_path: /home/zcai/jh_workspace/1/dppo/log/furniture-pretrain/one_leg_low_dim_pre_diffusion_mlp_img_ta8_td100/2024-10-29_22-38-22_42/checkpoint/state_500.pt #/home/kemove/yzhao_workspace/checkpoint/state_8000.pt  #${oc.env:DPPO_LOG_DIR}/furniture-pretrain/one_leg/one_leg_low_dim_pre_diffusion_mlp_ta8_td100/2024-07-22_20-01-16/checkpoint/state_8000.pt
+# normalization_path: ${oc.env:DPPO_DATA_DIR}/furniture/${env.specific.furniture}_${env.specific.randomness}/normalization.pth
+normalization_path: /home/zcai/jh_workspace/1/dppo/data/furniture/one_leg_low/normalization.pth
+
+
+seed: 42
+device: cuda:0
+env_name: ${env.specific.furniture}_${env.specific.randomness}_dim
+obs_dim: 14 #58 #modified 10.29 from 14
+action_dim: 8 #10
+denoising_steps: 100
+ft_denoising_steps: 5
+cond_steps: 1
+horizon_steps: 8
+act_steps: 8
+use_ddim: True
+img_cond_steps: 1 #added for img version
+
+env:
+  n_envs: 1
+  name: ${env_name}
+  env_type: furniture
+  max_episode_steps: 700
+  best_reward_threshold_for_success: 1
+  specific:
+    headless: false
+    furniture: new_one_leg
+    randomness: low
+    normalization_path: ${normalization_path}
+    obs_steps: ${cond_steps}
+    act_steps: ${act_steps}
+    sparse_reward: True
+  use_image_obs: True # added 10.29 for img obs
+  wrappers:
+    furniture_image:
+      normalization_path: ${normalization_path}
+      low_dim_keys: ['robot_state']
+      image_keys: ['color_image1','color_image2'] #['rgb']
+      shape_meta: ${shape_meta}
+    multi_step:
+      n_obs_steps: ${cond_steps}
+      n_action_steps: ${act_steps}
+      max_episode_steps: ${env.max_episode_steps}
+      reset_within_step: True
+      image_keys: ['color_image1','color_image2'] #['rgb'] # Ensure 'rgb' is handled here
+
+shape_meta:
+  obs:
+    color_image1: #rgb:
+      shape: [3, 224, 224]
+    color_image2: #rgb:
+      shape: [3, 224, 224]
+    robot_state:
+      shape: [14]
+  action: 
+    shape: [8]
+
+wandb:
+  entity: ${oc.env:DPPO_WANDB_ENTITY}
+  project: furniture-${env.specific.furniture}-${env.specific.randomness}-finetune
+  run: ${now:%H-%M-%S}_${name}
+
+train:
+  n_train_itr: 1000
+  n_critic_warmup_itr: 1
+  n_steps: ${eval:'round(${env.max_episode_steps} / ${act_steps})'}
+  gamma: 0.999
+  augment: True #added
+  grad_accumulate: 15
+  actor_lr: 1e-5
+  actor_weight_decay: 0
+  actor_lr_scheduler:
+    first_cycle_steps: 10000
+    warmup_steps: 10
+    min_lr: 1e-6
+  critic_lr: 1e-3
+  critic_weight_decay: 0
+  critic_lr_scheduler:
+    first_cycle_steps: 10000
+    warmup_steps: 10
+    min_lr: 1e-3
+  save_model_freq: 50
+  val_freq: 10
+  render:
+    freq: 1
+    num: 0
+  # PPO specific
+  reward_scale_running: True
+  reward_scale_const: 1.0
+  gae_lambda: 0.95
+  batch_size: 8800
+  update_epochs: 5
+  vf_coef: 0.5
+  target_kl: 1
+
+model:
+  _target_: model.diffusion.diffusion_ppo.PPODiffusion
+  # HP to tune
+  gamma_denoising: 0.9
+  clip_ploss_coef: 0.001
+  clip_ploss_coef_base: 0.001
+  clip_ploss_coef_rate: 3
+  randn_clip_value: 3
+  min_sampling_denoising_std: 0.04
+  #
+  use_ddim: ${use_ddim}
+  ddim_steps: ${ft_denoising_steps}
+  learn_eta: False
+  eta:
+    base_eta: 1
+    input_dim: ${obs_dim}
+    mlp_dims: [256, 256]
+    action_dim: ${action_dim}
+    min_eta: 0.1
+    max_eta: 1.0
+    _target_: model.diffusion.eta.EtaFixed
+  network_path: ${base_policy_path}
+  actor:
+    #_target_: model.diffusion.mlp_diffusion.DiffusionMLP
+    #time_dim: 32
+    mlp_dims: [1024, 1024, 1024, 1024, 1024, 1024, 1024]
+    #cond_mlp_dims: [512, 64]
+    use_layernorm: True # needed for larger MLP
+    #residual_style: True
+    #cond_dim: ${eval:'${obs_dim} * ${cond_steps}'}
+    #horizon_steps: ${horizon_steps}
+    #action_dim: ${action_dim}
+    _target_: model.diffusion.mlp_diffusion.VisionDiffusionMLP
+    backbone:
+      _target_: model.common.vit.VitEncoder
+      obs_shape: ${shape_meta.obs.color_image1.shape} #rgb.shape} # [3, 224, 224]
+      num_channel: ${eval:'3 * ${img_cond_steps}'} # 3 * 1 = 3# each image patch is history concatenated
+      img_h: ${shape_meta.obs.color_image1.shape[1]} #rgb.shape[1]} # 224
+      img_w: ${shape_meta.obs.color_image1.shape[2]} #rgb.shape[2]} # 224
+      cfg:
+        patch_size: 8
+        depth: 1
+        embed_dim: 128 #The ViT outputs embeddings of size 128.
+        num_heads: 4
+        embed_style: embed2
+        embed_norm: 0
+    augment: False
+    spatial_emb: 128
+    time_dim: 32
+    num_img: 2
+    #mlp_dims: [512, 512, 512]
+    residual_style: True
+    img_cond_steps: ${img_cond_steps}
+    cond_dim: ${eval:'${obs_dim} * ${cond_steps}'}
+    horizon_steps: ${horizon_steps}
+    action_dim: ${action_dim}
+  critic:
+    #_target_: model.common.critic.CriticObs
+    #cond_dim: ${eval:'${obs_dim} * ${cond_steps}'}
+    mlp_dims: [512, 512, 512]
+    #activation_type: Mish
+    #residual_style: True
+    _target_: model.common.critic.ViTCritic
+    spatial_emb: 128
+    augment: False
+    backbone:
+      _target_: model.common.vit.VitEncoder
+      obs_shape: ${shape_meta.obs.color_image1.shape} #rgb.shape}
+      num_channel: ${eval:'3 * ${img_cond_steps}'} # each image patch is history concatenated
+      img_h: ${shape_meta.obs.color_image1.shape[1]} #rgb.shape[1]}
+      img_w: ${shape_meta.obs.color_image1.shape[2]} #rgb.shape[2]}
+      cfg:
+        patch_size: 8
+        depth: 1
+        embed_dim: 128
+        num_heads: 4
+        embed_style: embed2
+        embed_norm: 0
+    img_cond_steps: ${img_cond_steps}
+    cond_dim: ${eval:'${obs_dim} * ${cond_steps}'} # obs_dim = 58, cond_steps = 1 Although set to 14 in your YAML, the code seems to be using 58 based on the logs:
+    #mlp_dims: [256, 256, 256]
+    activation_type: Mish
+    residual_style: True
+  ft_denoising_steps: ${ft_denoising_steps}
+  horizon_steps: ${horizon_steps}
+  obs_dim: ${obs_dim}
+  action_dim: ${action_dim}
+  denoising_steps: ${denoising_steps}
+  device: ${device}

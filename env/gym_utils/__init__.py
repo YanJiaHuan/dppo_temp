@@ -85,7 +85,7 @@ def make_async(
             gpu_id=gpu_id,
             headless=headless,
             num_envs=num_envs,
-            observation_space="state",
+            observation_space="state", #["color_image1","color_image1","robot_state"] 
             randomness=randomness,
             max_env_steps=max_episode_steps,
             record=record,

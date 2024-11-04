@@ -67,6 +67,8 @@ class TrainPPOImgDiffusionAgent(TrainPPODiffusionAgent):
                 # if done at the end of last iteration, the envs are just reset
                 firsts_trajs[0] = done_venv
 
+            print("Available observation keys:", prev_obs_venv.keys())    
+
             # Holder
             obs_trajs = {
                 k: np.zeros(

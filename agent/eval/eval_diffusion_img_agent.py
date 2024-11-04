@@ -50,8 +50,15 @@ class EvalImgDiffusionAgent(EvalAgent):
             # Select action
             with torch.no_grad():
                 cond = {
-                    key: torch.from_numpy(prev_obs_venv[key]).float().to(self.device)
-                    for key in self.obs_dims
+                    "state": torch.from_numpy(prev_obs_venv["state"])
+                        .float()
+                        .to(self.device),
+                        # "rgb": prev_obs_venv["state"][1]
+                        "rgb": prev_obs_venv["rgb"]  #torch.from_numpy(prev_obs_venv["rgb"][0])
+                        .float()
+                        .to(self.device) #modifed 10.31 
+                    # key: torch.from_numpy(prev_obs_venv[key]).float().to(self.device)
+                    # for key in self.obs_dims
                 }  # batch each type of obs and put into dict
                 samples = self.model(cond=cond, deterministic=True)
                 output_venv = (

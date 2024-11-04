@@ -115,7 +115,7 @@ class VisionDiffusionMLP(nn.Module):
         TODO long term: more flexible handling of cond
         """
         B, Ta, Da = x.shape
-        _, T_rgb, C, H, W = cond["rgb"].shape
+        _, T_rgb, C, H, W = cond["rgb"].shape #added num_img for 2 images 10.28 for pretrain DP
 
         # flatten chunk
         x = x.view(B, -1)

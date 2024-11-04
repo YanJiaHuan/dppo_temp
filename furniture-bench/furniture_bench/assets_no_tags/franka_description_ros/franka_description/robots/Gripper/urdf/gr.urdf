@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Gripper Simplified Assemblyurdf.SLDASM">
+  <link
+    name="panda_hand">
+    <inertial>
+      <origin
+        xyz="0.000590732710131745 -0.00212482055829597 0.0390711121564613"
+        rpy="0 0 0" />
+      <mass
+        value="0.410076712822003" />
+      <inertia
+        ixx="0.000490743093860451"
+        ixy="8.88694180287399E-06"
+        ixz="-4.40788336869861E-07"
+        iyy="0.000921185312665057"
+        iyz="3.47120316959879E-05"
+        izz="0.00085013675383108" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/panda_hand.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.749019607843137 0.749019607843137 0.749019607843137 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/panda_hand.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="Left_Gripper">
+    <inertial>
+      <origin
+        xyz="-0.14078 0.018679 0.052776"
+        rpy="0 0 0" />
+      <mass
+        value="0.11401" />
+      <inertia
+        ixx="7.9791E-05"
+        ixy="-1.4328E-07"
+        ixz="-6.9009E-06"
+        iyy="9.604E-05"
+        iyz="1.6264E-08"
+        izz="3.962E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Left_Gripper.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Left_Gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="LG"
+    type="prismatic">
+    <origin
+      xyz="0.071084 -0.02241 0.0801"
+      rpy="0 0 0" />
+    <parent
+      link="panda_hand" />
+    <child
+      link="Left_Gripper" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="0"
+      upper="0.055"
+      effort="10"
+      velocity="0.1" />
+  </joint>
+  <link
+    name="Right_Gripper">
+    <inertial>
+      <origin
+        xyz="-0.14059 0.0092217 0.053953"
+        rpy="0 0 0" />
+      <mass
+        value="0.11017" />
+      <inertia
+        ixx="7.7997E-05"
+        ixy="-1.4178E-07"
+        ixz="-6.9009E-06"
+        iyy="9.5588E-05"
+        iyz="9.38E-09"
+        izz="3.7415E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Right_Gripper.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Right_Gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RG"
+    type="prismatic">
+    <origin
+      xyz="-0.071084 0.01159 0.0801"
+      rpy="0 0 -3.1416" />
+    <parent
+      link="panda_hand" />
+    <child
+      link="Right_Gripper" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="0"
+      upper="0.055"
+      effort="10"
+      velocity="0.1" />
+  </joint>
+</robot>

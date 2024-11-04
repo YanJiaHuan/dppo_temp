@@ -16,6 +16,9 @@ from copy import deepcopy
 log = logging.getLogger(__name__)
 from util.scheduler import CosineAnnealingWarmupRestarts
 
+#import pathlib
+
+
 DEVICE = "cuda:0"
 
 
@@ -155,6 +158,9 @@ class PreTrainAgent:
         savepath = os.path.join(self.checkpoint_dir, f"state_{self.epoch}.pt")
         torch.save(data, savepath)
         log.info(f"Saved model to {savepath}")
+
+    def get_checkpoint_path(self, tag='latest'):
+        return os.path.join(self.checkpoint_dir, f"{tag}.pt") #pathlib.Path(self.checkpoint_dir).joinpath(f'{tag}.ckpt')
 
     def load(self, epoch):
         """

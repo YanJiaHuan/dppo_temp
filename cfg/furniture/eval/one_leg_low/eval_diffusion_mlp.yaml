@@ -7,14 +7,14 @@ _target_: agent.eval.eval_diffusion_agent.EvalDiffusionAgent
 
 name: ${env_name}_eval_diffusion_mlp_ta${horizon_steps}_td${denoising_steps}
 logdir: ${oc.env:DPPO_LOG_DIR}/furniture-eval/${name}/${now:%Y-%m-%d}_${now:%H-%M-%S}_${seed}
-base_policy_path: ${oc.env:DPPO_LOG_DIR}/furniture-pretrain/one_leg/one_leg_low_dim_pre_diffusion_mlp_ta8_td100/2024-07-22_20-01-16/checkpoint/state_8000.pt
+base_policy_path: /home/zcai/jh_workspace/1/dppo/log/furniture-pretrain/one_leg_low_dim_pre_diffusion_mlp_img_ta8_td100/2024-10-29_22-38-22_42/checkpoint/state_1000.pt #${oc.env:DPPO_LOG_DIR}/furniture-pretrain/one_leg/one_leg_low_dim_pre_diffusion_mlp_ta8_td100/2024-07-22_20-01-16/checkpoint/state_8000.pt
 normalization_path: ${oc.env:DPPO_DATA_DIR}/furniture/${env.specific.furniture}_${env.specific.randomness}/normalization.pth
 
 seed: 42
 device: cuda:0
 env_name: ${env.specific.furniture}_${env.specific.randomness}_dim
-obs_dim: 58
-action_dim: 10
+obs_dim: 14 #58
+action_dim: 8 #10
 denoising_steps: 100
 cond_steps: 1
 horizon_steps: 8
@@ -26,7 +26,7 @@ n_steps: ${eval:'round(${env.max_episode_steps} / ${act_steps})'}
 render_num: 0
 
 env:
-  n_envs: 1000
+  n_envs: 1 #1000
   name: ${env_name}
   env_type: furniture
   max_episode_steps: 700

@@ -1,0 +1,16 @@
+10-18-2024
+python -m furniture_bench.scripts.collect_data --furniture one_leg --out-data-path our_data/teleop_sim_demo  --is-sim  --scripted
+
+
+python -m furniture_bench.scripts.collect_data --furniture one_leg --out-data-path keyboard_sim_demo --is-sim --input-device keyboard
+
+
+
+
+
+10-23-2024
+采数据
+conda activate dppo
+
+python -m furniture_bench.scripts.collect_data --furniture one_leg --out-data-path our_data/pickplace_xz  --is-sim  
+

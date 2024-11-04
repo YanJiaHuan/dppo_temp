@@ -12,7 +12,6 @@ class LinearNormalizer(nn.Module):
     def __init__(self):
         super().__init__()
         self.stats = nn.ParameterDict()
-
     def fit(self, data_dict):
         for key, tensor in data_dict.items():
             min_value = tensor.min(dim=0)[0]
@@ -32,21 +31,37 @@ class LinearNormalizer(nn.Module):
                     "max": nn.Parameter(max_value, requires_grad=False),
                 },
             )
+            print('self.stats[key]: ', self.stats[key])
         self._turn_off_gradients()
 
     def _normalize(self, x, key):
         stats = self.stats[key]
-        print("status[max]'s shape is: ", stats["max"].shape)
-        print("status[min]'s shape is: ", stats["min"].shape)
-        print("x's shape is: ", x.shape)
-        x = x[:, :, :58]
-        print("x's shape is: ", x.shape)
+        # no matter what the stats shape is, the status should be same with x
+        if stats["max"].shape[0] != x.shape[1]:
+            stats["max"] = stats["max"][:x.shape[1]]
+            stats["min"] = stats["min"][:x.shape[1]]
         x = (x - stats["min"]) / (stats["max"] - stats["min"])
         x = 2 * x - 1
+
+        # print('key: ', key)
+        # print('stats: ', stats)
+        # print("status[max]'s shape is: ", stats["max"].shape)
+        # print("status[min]'s shape is: ", stats["min"].shape)
+        # print("x's shape is: ", x.shape)
+        # x = x[:, :, :14] #58 modified 10.30
+        # print("x's shape is: ", x.shape)
+        # if stats["max"].shape[0] == 58:
+        #     stats["max"] = stats["max"][:14]
+        #     stats["min"] = stats["min"][:14]
+        # x = (x - stats["min"]) / (stats["max"] - stats["min"])
+        # x = 2 * x - 1
         return x
 
     def _denormalize(self, x, key):
         stats = self.stats[key]
+        if stats["max"].shape[0] != x.shape[1]:
+            stats["max"] = stats["max"][:x.shape[1]]
+            stats["min"] = stats["min"][:x.shape[1]]
         x = (x + 1) / 2
         x = x * (stats["max"] - stats["min"]) + stats["min"]
         return x
@@ -66,6 +81,8 @@ class LinearNormalizer(nn.Module):
 
         stats = nn.ParameterDict()
         for key, value in state_dict.items():
+            if value[0].shape == 58:
+                value = value[:14]
             if key.startswith("stats."):
                 param_key = key[6:]
                 keys = param_key.split(".")

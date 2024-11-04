@@ -54,7 +54,7 @@ class TrainAgent:
             wrappers=cfg.env.get("wrappers", None),
             robomimic_env_cfg_path=cfg.get("robomimic_env_cfg_path", None),
             shape_meta=cfg.get("shape_meta", None),
-            use_image_obs=cfg.env.get("use_image_obs", False),
+            use_image_obs=cfg.env.get("use_image_obs", True), #False), #modified 10.29
             render=cfg.env.get("render", False),  # default as Fasle
             render_offscreen=cfg.env.get("save_video", False),
             obs_dim=cfg.obs_dim,

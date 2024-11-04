@@ -11,13 +11,23 @@ log = logging.getLogger(__name__)
 from util.timer import Timer
 from agent.pretrain.train_agent import PreTrainAgent, batch_to_device
 
+from omegaconf import OmegaConf
+import copy
 
 class TrainDiffusionAgent(PreTrainAgent):
 
-    def __init__(self, cfg):
+    def __init__(self, cfg: OmegaConf):
         super().__init__(cfg)
-
+    
     def run(self):
+        #modified 11.1 to add training resume option
+        cfg = copy.deepcopy(self.cfg)
+        # resume training
+        if cfg.training.resume:
+            lastest_ckpt_path = self.get_checkpoint_path()
+            if lastest_ckpt_path.is_file():
+                print(f"Resuming from checkpoint {lastest_ckpt_path}")
+                self.load_checkpoint(path=lastest_ckpt_path)
 
         timer = Timer()
         self.epoch = 1

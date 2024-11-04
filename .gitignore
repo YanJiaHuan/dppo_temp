@@ -155,3 +155,8 @@ dmypy.json
 cfg/robomimic/*.sh
 
 *.out
+
+# added by jh
+log/
+# ignore png
+*.png
